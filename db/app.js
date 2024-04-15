@@ -20,7 +20,7 @@ app.all('*', (request, response, next) => {
 app.use((err, request, response, next) => {
     if (err.status && err.message)
       response.status(err.status).send({ message: err.message });
-    next();
+    next(err);
   });
   
   app.use((err, request, response, next) => {
