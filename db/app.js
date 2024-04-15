@@ -2,15 +2,14 @@ const express = require('express');
 const app = express();
 
 // connect to controller
-const { getTopics, getEndpoints } = require('../controller/app.controller');
+const { getTopics, getEndpoints, getArticlesById} = require('../controller/app.controller');
 
 app.use(express.json());
 
 // endpoints
 app.get('/api/topics', getTopics);
 app.get('/api/', getEndpoints);
-
-
+app.get('/api/articles/:article_id', getArticlesById);
 
 // error handling
 app.all('*', (request, response, next) => {
