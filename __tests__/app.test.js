@@ -32,7 +32,7 @@ describe("NC_NEWS", () => {
             });
         });
 
-        test("GET 404: Responds with an error if passed an invalid sort_by parameter.", () => {
+        test("GET 404: Responds with an error if passed a wrong path or non-existent endpoint.", () => {
             return request(app)
               .get('/api/topics!')
               .expect(404)
