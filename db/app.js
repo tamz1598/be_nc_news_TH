@@ -2,17 +2,17 @@ const express = require('express');
 const app = express();
 
 // connect to controller
-
-const { getTopics } = require('../controller/app.controller')
+const { getTopics, getEndpoints } = require('../controller/app.controller');
 
 app.use(express.json());
 
 // endpoints
-
 app.get('/api/topics', getTopics);
+app.get('/api/', getEndpoints);
+
+
 
 // error handling
-
 app.all('*', (request, response, next) => {
     response.status(404).send({ message: 'endpoint not found' });
   })

@@ -38,8 +38,20 @@ describe("NC_NEWS", () => {
               .expect(404)
               .then(({ body }) => {
                 const { message } = body; 
-                  expect(message).toBe('endpoint not found');
+                expect(message).toBe('endpoint not found');
             });
-          });
+        });
     });
+    describe('/api/', () => {
+        test('GET 200: Responds with an object describing all the available endpoints on your API', () => {
+            return request(app)
+            .get('/api/')
+            .expect(200)
+            .then(({body}) =>{
+                console.log(body)
+                const { endpoint } = body;
+                expect(endpoint).toBe(endpoint);
+            });
+        });
+    })
 });
