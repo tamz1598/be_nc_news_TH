@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 // connect to controller
-const { getTopics, getEndpoints, getArticlesById} = require('../controller/app.controller');
+const { getTopics, getEndpoints, getArticlesById } = require('../controller/app.controller');
 
 app.use(express.json());
 
