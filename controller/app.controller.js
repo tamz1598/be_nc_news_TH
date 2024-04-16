@@ -1,6 +1,7 @@
-const { selectTopics, selectArticlesById } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
+const articles = require('../db/data/test-data/articles');
 
 exports.getTopics = (req, res, next) => {
     selectTopics().then((topics) => {
@@ -18,16 +19,21 @@ exports.getEndpoints = (req, res, next) =>{
 
 exports.getArticlesById = (req, res, next) => {
     const { article_id } = req.params;
-    selectArticlesById(article_id).then((articles) => {
-        if (!articles){
-            // If article not found, respond with 404
+
+    Promise.all([checkArticleExists(article_id), selectArticlesById(article_id)])
+
+    selectArticlesById(article_id)
+    .then((articles) => {
+        if (!articles) {
             return res.status(404).send({ message: 'article id not found' });
         }
-        res.status(200).send({articles})
+        res.status(200).send({ articles });
     })
     // error handling
     .catch((err) => {
-    console.log(err)
-    next(err);
+        console.log(err)
+        next(err);
     });
 }
+
+
