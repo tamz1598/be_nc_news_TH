@@ -7,11 +7,11 @@ exports.selectTopics = () =>{
     });
 }
 
-
 exports.selectArticlesById = (article_id) => {
     return db
     .query('SELECT * FROM articles WHERE article_id=$1;', [article_id])
     .then(({ rows:articles }) =>{
+        console.log(articles,' <-- model select id')
         return articles[0];
     })   
 }
@@ -19,8 +19,9 @@ exports.selectArticlesById = (article_id) => {
 exports.checkArticleExists = (article_id) => {
     return db
     .query(`SELECT * FROM articles WHERE article_id=$1;`, [article_id])
-    .then(({ rows:articles }) => {
-        if (!articles){
+    .then(({ rows }) => {
+        console.log(rows, '<-- model select check it exists')
+        if ([rows].length === 0){
             // If nothing in array, respond with 404
             return Promise.reject({ status: 404, message: "article id not found"})
         }
@@ -41,5 +42,13 @@ exports.selectArticles = () => {
     .then(({ rows }) => {
         return rows;
     });
+}
 
+exports.selectCommentsByArticleId = (article_id) => {
+    return db
+    .query(`SELECT * FROM comments WHERE article_id=$1;`, [article_id])
+    .then(({ rows:comments }) =>{
+        console.log(comments, '<-- comments got through')
+        return comments;
+    })
 }

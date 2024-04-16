@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 // connect to controller
-const { getTopics, getEndpoints, getArticlesById, getArticles } = require('../controller/app.controller');
+const { getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId } = require('../controller/app.controller');
 
 app.use(express.json());
 
@@ -11,6 +11,7 @@ app.get('/api/topics', getTopics);
 app.get('/api/', getEndpoints);
 app.get('/api/articles/:article_id', getArticlesById);
 app.get('/api/articles', getArticles);
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
 // error handling
 app.all('*', (request, response, next) => {

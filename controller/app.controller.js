@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -43,6 +43,35 @@ exports.getArticles = (req, res, next) => {
     .catch((err) => {
         next(err);
     });
+}
+
+exports.getCommentsByArticleId = (req, res, next) => {
+    const { article_id } = req.params;
+
+   
+    Promise.all([checkArticleExists(article_id), selectArticlesById(article_id)])
+        .then(([exists, articles]) => {
+            console.log(articles, '<--- exists when getting id');
+            if (!articles) {
+                return res.status(404).send({ message: 'Article not found' });
+            }
+            // Assuming selectCommentsByArticleId returns comments array directly
+            selectCommentsByArticleId(article_id)
+                .then((comments) => {
+                     // Ensure each comment has a vote property
+                     comments.forEach(comment => {
+                        comment.vote = typeof comment.vote === 'number' ? comment.vote : 0; // Setting it to 0 if not a number so a value is in place
+                    });
+                    console.log(comments, ' <--- comments when getting id');
+                    res.status(200).send({ comments });
+                })
+                .catch((err) => {
+                    next(err);
+                });
+        })
+        .catch((err) => {
+            next(err);
+        });
 }
 
 
