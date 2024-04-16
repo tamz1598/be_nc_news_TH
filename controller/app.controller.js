@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -31,7 +31,16 @@ exports.getArticlesById = (req, res, next) => {
     })
     // error handling
     .catch((err) => {
-        console.log(err)
+        next(err);
+    });
+}
+
+exports.getArticles = (req, res, next) => {
+    selectArticles()
+    .then((articles) => {
+        res.status(200).send({ articles });
+    })
+    .catch((err) => {
         next(err);
     });
 }
