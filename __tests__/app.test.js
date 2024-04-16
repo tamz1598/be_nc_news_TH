@@ -117,7 +117,7 @@ describe("NC_NEWS", () => {
     }); 
     
     describe.only('/api/articles/3/comments', () => {
-        test('GET 200: Responds with an array of comments for the given article_id', () => {
+        test.only('GET 200: Responds with an array of comments for the given article_id', () => {
             return request(app)
               .get('/api/articles/3/comments')
               .expect(200)
@@ -128,10 +128,12 @@ describe("NC_NEWS", () => {
                   expect(typeof comment.body).toBe('string');
                   expect(typeof comment.article_id).toBe('number');  
                   expect(typeof comment.author).toBe('string');
-                  expect(typeof comment.vote).toBe('number');
+                  expect(typeof comment.votes).toBe('number');
                   expect(typeof comment.created_at).toBe('string');
               })
             });
         });
+
+       
     });
 });

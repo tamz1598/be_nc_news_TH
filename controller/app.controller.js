@@ -58,10 +58,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
             // Assuming selectCommentsByArticleId returns comments array directly
             selectCommentsByArticleId(article_id)
                 .then((comments) => {
-                     // Ensure each comment has a vote property
-                     comments.forEach(comment => {
-                        comment.vote = typeof comment.vote === 'number' ? comment.vote : 0; // Setting it to 0 if not a number so a value is in place
-                    });
                     console.log(comments, ' <--- comments when getting id');
                     res.status(200).send({ comments });
                 })
