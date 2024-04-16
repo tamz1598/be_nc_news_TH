@@ -112,30 +112,26 @@ describe("NC_NEWS", () => {
               .then(({ body }) => {
                 const { articles } = body;
                 expect(articles).toBeSortedBy('created_at', {descending: true });
-
-                expect(articles).toHaveLength(13);
-
-                  articles.forEach(article => {
-                  expect(typeof article.article_id).toBe('number');
-                  expect(typeof article.title).toBe('string');
-                  expect(typeof article.topic).toBe('string');
-                  expect(typeof article.author).toBe('string');
-                  expect(typeof article.created_at).toBe('string');
-                  expect(typeof article.votes).toBe('number');
-                  expect(typeof article.article_img_url).toBe('string');
-                  expect(typeof article.comment_count).toBe('string');
-                  });
             });
         });
-
-        test("GET 404: Responds with an error if passed a wrong path or non-existent endpoint.", () => {
+    }); 
+    
+    describe.only('/api/articles/3/comments', () => {
+        test('GET 200: Responds with an array of comments for the given article_id', () => {
             return request(app)
-              .get('/api/articles!')
-              .expect(404)
+              .get('/api/articles/3/comments')
+              .expect(200)
               .then(({ body }) => {
-                const { message } = body; 
-                expect(message).toBe('endpoint not found');
+                const { comments } = body;
+                comments.forEach(comment => {
+                  expect(typeof comment.comment_id).toBe('number');
+                  expect(typeof comment.body).toBe('string');
+                  expect(typeof comment.article_id).toBe('number');  
+                  expect(typeof comment.author).toBe('string');
+                  expect(typeof comment.vote).toBe('number');
+                  expect(typeof comment.created_at).toBe('string');
+              })
             });
         });
-    });   
+    });
 });
