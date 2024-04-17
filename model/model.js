@@ -30,14 +30,37 @@ exports.checkArticleExists = (article_id) => {
 // count comment(article-id) as comment_count
 // Join comment and article to show count
 
-exports.selectArticles = () => {
-    return db
-    .query(`
+exports.selectArticles = (topic) => {
+    const validTopics = [
+        { slug: 'mitch' },
+        { slug: 'cats' },
+        { slug: 'paper' }
+    ];
+
+    const validTopicSlugs = validTopics.map(topic => topic.slug);
+    const isValid = validTopicSlugs.includes(topic);
+
+    if (!isValid && topic) {
+        return Promise.reject({ status: 404, message: 'Topic not found' }); // Reject the promise with a status and a message
+    }
+
+    let query = `
     SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id 
-    ORDER BY articles.created_at DESC;`)
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+    const values = [];
+
+    if (topic) {
+        query += ` WHERE articles.topic = $1`;
+        values.push(topic);
+    }
+
+    query += ` GROUP BY articles.article_id 
+    ORDER BY articles.created_at DESC;`;
+
+    return db
+    .query(query, values)
     .then(({ rows }) => {
         return rows;
     });

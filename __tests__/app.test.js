@@ -222,7 +222,7 @@ describe("NC_NEWS", () => {
     });
 
     describe('/api/users', () => {
-        // task 2
+        // task 10
         test('GET 200: Responds with an an array of objects of users.', () => {
             return request(app)
               .get('/api/users')
@@ -236,6 +236,42 @@ describe("NC_NEWS", () => {
                   expect(typeof user.name).toBe('string');
                   expect(typeof user.avatar_url).toBe('string');
                 });
+            });
+        });
+    });
+
+    describe('/api/articles/', () => {
+        // task 11
+        test("GET 200: Dependant on topic, respond with all articles related to that topic.", () => {
+            return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles.length).toBe(1);
+                    articles.forEach((article) => {
+                     expect(article.topic).toBe('cats')
+                     })
+            });
+        });
+
+        test("GET 200: Querying for a topic that is empty.", () => {
+            return request(app)
+              .get('/api/articles?topic=paper')
+              .expect(200)
+              .then(({ body }) => {
+                const { articles } = body;
+                  expect(Array.isArray(articles)).toBe(true);
+                  expect(articles.length).toBe(0);
+            });
+        });
+
+        test("GET 404: Querying for a topic that does not exist.", () => {
+            return request(app)
+              .get('/api/articles?topic=banana')
+              .expect(404)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('Topic not found');
             });
         });
     });
