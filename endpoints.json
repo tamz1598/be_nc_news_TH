@@ -57,5 +57,20 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:articles_id/comments" : {
+    "description": "adds a comment based on article_id",
+    "queries": ["author", "article_id", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+         " body": "Brilliant code here",
+          "votes": 0,
+          "author": "grumpy19",
+          "article_id": 3,
+          "created_at": 1713343310189
+        }
+      ]
+    }
   }
 }
