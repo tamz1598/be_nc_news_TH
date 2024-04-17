@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 // connect to controller
-const { getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentsByArticleId } = require('../controller/app.controller');
+const { getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentsByArticleId, patchArticleByArticleId } = require('../controller/app.controller');
 
 app.use(express.json());
 
@@ -14,6 +14,8 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
+
+app.patch('/api/articles/:article_id', patchArticleByArticleId);
 
 // error handling
 app.all('*', (request, response, next) => {
