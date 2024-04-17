@@ -211,4 +211,13 @@ describe("NC_NEWS", () => {
             });
         });
     });
+
+    describe('/api/comments/:comment_id', () => {
+        // task 9
+        test("DELETE 204: delete the given comment by comment_id", () => {
+            return request(app)
+            .delete('/api/comments/4')
+            .expect(204)
+        })
+    });
 });

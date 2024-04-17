@@ -91,5 +91,16 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comment_id" : {
+    "description": "deletes a comment based on comment_id",
+    "queries": ["author", "sort_by", "order", "article_id"],
+    "exampleResponse": {
+      "comments": [
+        {
+          
+        }
+      ]
+    }
   }
 }
