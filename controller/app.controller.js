@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArtistId, updateArticleByArticleId, deleteCommentByCommentId } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArtistId, updateArticleByArticleId, deleteCommentByCommentId, selectUsers } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -129,6 +129,16 @@ exports.deleteCommentByCommentId = (req, res, next) => {
     })
     .catch((err) => {
         next( err);
+    });
+}
+
+exports.getUsers = (req, res, next) => {
+    selectUsers().then((users) => {
+        res.status(200).send({ users });
+    })
+    // error handling
+    .catch((err) => {
+    next(err);
     });
 }
 

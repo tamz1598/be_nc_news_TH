@@ -220,4 +220,23 @@ describe("NC_NEWS", () => {
             .expect(204)
         })
     });
+
+    describe('/api/users', () => {
+        // task 2
+        test('GET 200: Responds with an an array of objects of users.', () => {
+            return request(app)
+              .get('/api/users')
+              .expect(200)
+              .then(({ body }) => {
+                const { users } = body;
+                expect(users).toHaveLength(4);
+      
+                users.forEach(user => {
+                  expect(typeof user.username).toBe('string');
+                  expect(typeof user.name).toBe('string');
+                  expect(typeof user.avatar_url).toBe('string');
+                });
+            });
+        });
+    });
 });
