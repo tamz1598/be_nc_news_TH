@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const format = require('pg-format');
 
 exports.selectTopics = () =>{
     return db
@@ -11,7 +12,6 @@ exports.selectArticlesById = (article_id) => {
     return db
     .query('SELECT * FROM articles WHERE article_id=$1;', [article_id])
     .then(({ rows:articles }) =>{
-        console.log(articles,' <-- model select id')
         return articles[0];
     })   
 }
@@ -20,7 +20,6 @@ exports.checkArticleExists = (article_id) => {
     return db
     .query(`SELECT * FROM articles WHERE article_id=$1;`, [article_id])
     .then(({ rows }) => {
-        console.log(rows, '<-- model select check it exists')
         if ([rows].length === 0){
             // If nothing in array, respond with 404
             return Promise.reject({ status: 404, message: "article id not found"})
@@ -48,7 +47,19 @@ exports.selectCommentsByArticleId = (article_id) => {
     return db
     .query(`SELECT * FROM comments WHERE article_id=$1;`, [article_id])
     .then(({ rows:comments }) =>{
-        console.log(comments, '<-- comments got through')
         return comments;
     })
+}
+
+exports.insertCommentByArtistId = (newComment) => {
+    const sqlString = format(`
+        INSERT INTO comments
+        (body, article_id, author, votes, created_at)
+        VALUES %L RETURNING *;`,
+        [[newComment.body, newComment.article_id, newComment.author, newComment.votes, newComment.created_at]])
+    return db.query(sqlString)
+    .then(({ rows }) => {
+        return rows[0];
+    });
+    
 }

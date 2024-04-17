@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArtistId } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -47,27 +47,56 @@ exports.getArticles = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
-
    
-    Promise.all([checkArticleExists(article_id), selectArticlesById(article_id)])
-        .then(([exists, articles]) => {
-            console.log(articles, '<--- exists when getting id');
-            if (!articles) {
-                return res.status(404).send({ message: 'Article not found' });
-            }
-            // Assuming selectCommentsByArticleId returns comments array directly
-            selectCommentsByArticleId(article_id)
-                .then((comments) => {
-                    console.log(comments, ' <--- comments when getting id');
-                    res.status(200).send({ comments });
-                })
-                .catch((err) => {
-                    next(err);
-                });
-        })
-        .catch((err) => {
-            next(err);
-        });
+ Promise.all([checkArticleExists(article_id), selectArticlesById(article_id)])
+    .then(([exists, articles]) => {
+        if (!articles) {
+            return res.status(404).send({ message: 'Article not found' });
+        }
+        // Assuming selectCommentsByArticleId returns comments array directly
+        selectCommentsByArticleId(article_id)
+            .then((comments) => {
+                res.status(200).send({ comments });
+            })
+            .catch((err) => {
+                next(err);
+            });
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
+exports.postCommentsByArticleId = (req, res, next) => {
+    const { username, body } = req.body;
+    const article_id = req.params.article_id;
+
+    // Check if username is missing or an invalid input
+    if (!username || typeof username !== 'string') {
+        return res.status(400).send({ message: 'This is a bad request, please check your username.' });
+    }
+
+    // Check if body is missing or an invalid input
+    if (!body || typeof body !== 'string') {
+        return res.status(400).send({ message: 'This is a bad request, please check your message.' });
+    }
+   
+    const newComment = {
+        body: body,
+        article_id,
+        author: username,
+        votes: 0,
+        created_at: new Date().toISOString() 
+    };
+
+    insertCommentByArtistId(newComment)
+    .then((comment) => {
+        res.status(201).send({ comment });
+    })
+    .catch((err) => {
+        console.log(err)
+        next(err);
+    });
 }
 
 

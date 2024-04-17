@@ -116,8 +116,8 @@ describe("NC_NEWS", () => {
         });
     }); 
     
-    describe.only('/api/articles/3/comments', () => {
-        test.only('GET 200: Responds with an array of comments for the given article_id', () => {
+    describe('/api/articles/3/comments', () => {
+        test('GET 200: Responds with an array of comments for the given article_id', () => {
             return request(app)
               .get('/api/articles/3/comments')
               .expect(200)
@@ -134,6 +134,39 @@ describe("NC_NEWS", () => {
             });
         });
 
-       
+        test("POST 201: Add a new comment to an article and return that comment.", () => {
+            return request(app)
+              .post('/api/articles/3/comments')
+              .send({
+                username: "icellusedkars",
+                body: "Brilliant code here"
+              })
+              .expect(201)
+              .then(({ body }) => {
+                const { comment } = body;
+                expect(comment).toMatchObject({
+                comment_id: 19,
+                body: "Brilliant code here",
+                article_id: 3,
+                author: "icellusedkars",
+                votes: 0,
+                created_at: expect.any(String)
+                });
+              });
+        });
+
+        test("GET 400: Bad request of username.", () => {
+            return request(app)
+              .post('/api/articles/3/comments')
+              .send({
+                username: 70,
+                body: "Brilliant code here"
+              })
+              .expect(400)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('This is a bad request, please check your username.');
+            });
+        });
+        
     });
 });
