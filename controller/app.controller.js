@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArtistId } = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArtistId, updateArticleByArticleId } = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -94,7 +94,26 @@ exports.postCommentsByArticleId = (req, res, next) => {
         res.status(201).send({ comment });
     })
     .catch((err) => {
-        console.log(err)
+        next(err);
+    });
+}
+
+exports.patchArticleByArticleId = (req, res, next) => {
+    // retrieve data
+    const { article_id } = req.params;
+    const { inc_votes } = req.body;
+
+    // error handling check data input
+    if (!inc_votes || typeof inc_votes !== 'number') {
+        return res.status(400).send({ message: 'This is a bad request, invalid format or votes is missing.' });
+    }
+
+    // update article
+    updateArticleByArticleId(article_id, inc_votes)
+    .then((update) => {
+        res.status(202).send({update})
+    })
+    .catch((err) => {
         next(err);
     });
 }

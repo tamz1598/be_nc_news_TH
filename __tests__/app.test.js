@@ -15,8 +15,9 @@ afterAll(() => {
 
 
 describe("NC_NEWS", () => {
-    // get /api/topics
+    // GET /api/topics
     describe('/api/topics', () => {
+        // task 2
         test('GET 200: Responds with an array of topic object containing the following properties: slug and description.', () => {
             return request(app)
               .get('/api/topics')
@@ -43,7 +44,9 @@ describe("NC_NEWS", () => {
         });
     });
 
+    // /api/
     describe('/api/', () => {
+        // task 3
         test('GET 200: Responds with an object describing all the available endpoints on your API', () => {
             return request(app)
             .get('/api/')
@@ -55,7 +58,9 @@ describe("NC_NEWS", () => {
         });
     })
 
+    // /api/articles/:article_id
     describe('/api/articles/:article_id', () => {
+        //task 4
         test("GET 200: Responds with getting an article by its id.", () => {
             return request(app)
               .get('/api/articles/1')
@@ -84,6 +89,7 @@ describe("NC_NEWS", () => {
     });
 
     describe('/api/articles', () => {
+        // task 5
         test("GET 200: Responds with an array of articles of article objects, with comment.", () => {
             return request(app)
               .get('/api/articles')
@@ -117,6 +123,7 @@ describe("NC_NEWS", () => {
     }); 
     
     describe('/api/articles/3/comments', () => {
+        // task 6
         test('GET 200: Responds with an array of comments for the given article_id', () => {
             return request(app)
               .get('/api/articles/3/comments')
@@ -134,6 +141,7 @@ describe("NC_NEWS", () => {
             });
         });
 
+        // task 7
         test("POST 201: Add a new comment to an article and return that comment.", () => {
             return request(app)
               .post('/api/articles/3/comments')
@@ -167,6 +175,40 @@ describe("NC_NEWS", () => {
                 expect(message).toBe('This is a bad request, please check your username.');
             });
         });
+
+    });
+     // /api/articles/:article_id
+     describe('/api/articles/:article_id', () => {
+        // task 8
+        test("PATCH 202: Responds with an updated article.", () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({inc_votes: 5})
+            .expect(202)
+            .then(({ body }) => {
+                const { update } = body;
+                expect(update).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 105,
+                article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+                });
+            });
+        }); 
         
+        test("GET 400: Bad request of increments in vote.", () => {
+            return request(app)
+              .patch('/api/articles/1')
+              .send({inc_votes: 'hello'})
+              .expect(400)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('This is a bad request, invalid format or votes is missing.');
+            });
+        });
     });
 });
