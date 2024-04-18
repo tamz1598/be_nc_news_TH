@@ -20,8 +20,9 @@ exports.getEndpoints = (req, res, next) =>{
 
 // GET ARTICLES
 exports.getArticles = (req, res, next) => {
-    const { topic } = req.query;
-    selectArticles(topic)
+    const { topic, sort_by, order } = req.query;
+
+    selectArticles(topic, sort_by, order)
     .then((articles) => {
         res.status(200).send({ articles });
     })

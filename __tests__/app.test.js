@@ -123,9 +123,47 @@ describe("NC_NEWS", () => {
                 expect(message).toBe('Topic not found');
             });
         });
-    });
 
-    
+        // task 15
+        test.only("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles).toBeSortedBy('created_at', {descending: true });
+                })
+        });
+
+        test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
+            return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles).toBeSortedBy('author', {descending: true });
+            })
+        });
+
+        test("GET 400: Responds with an error if passed an invalid sort order.", () => {
+            return request(app)
+              .get('/api/articles?order=banana')
+              .expect(400)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('invalid sort order');
+            });
+        });
+
+        test("GET 400: Responds with an error if passed an invalid sort order.", () => {
+            return request(app)
+              .get('/api/articles?sort_by=something')
+              .expect(400)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('invalid query value');
+            });
+        });
+    });
+   
     // /api/articles/:article_id
     describe('/api/articles/:article_id', () => {
         //task 4
@@ -189,7 +227,7 @@ describe("NC_NEWS", () => {
         });
 
         // task 12
-        test("GET 200: Responds with getting an article by its id, with the comment count added.", () => {
+        test("GET 200: FEATURE REQUEST Responds with getting an article by its id, with the comment count added.", () => {
             return request(app)
               .get('/api/articles/1')
               .expect(200)
@@ -292,7 +330,4 @@ describe("NC_NEWS", () => {
             });
         });
     });
-
-
 });
-

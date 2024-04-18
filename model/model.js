@@ -10,7 +10,14 @@ exports.selectTopics = () =>{
 }
 
 // GET ARTICLE & QUERY DEFINED
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by="created_at", order="desc") => {
+
+    const validSortBy = ['title' ,'topic' ,'author' ,'body', 'created_at','votes' ,'article_img_url']
+
+    if (!validSortBy.includes(sort_by))
+      return Promise.reject({status: 400, message: 'invalid query value'})
+
+
     const validTopics = [
         { slug: 'mitch' },
         { slug: 'cats' },
@@ -28,6 +35,9 @@ exports.selectArticles = (topic) => {
     SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+    if (!['asc', 'desc'].includes(order))
+    return Promise.reject({status: 400, message: 'invalid sort order'})
     
     const values = [];
     
@@ -37,11 +47,12 @@ exports.selectArticles = (topic) => {
     }
     
     query += ` GROUP BY articles.article_id 
-    ORDER BY articles.created_at DESC;`;
+    ORDER BY ${sort_by} ${order};`;
     
     return db
     .query(query, values)
     .then(({ rows }) => {
+        console.log(rows)
         return rows;
     });
 }
