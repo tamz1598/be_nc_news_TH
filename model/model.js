@@ -118,5 +118,3 @@ exports.selectUsers = () =>{
     });
 }
 
-
-
