@@ -7,10 +7,10 @@ const { getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArti
 app.use(express.json());
 
 // endpoints
-app.get('/api/topics', getTopics);
 app.get('/api/', getEndpoints);
-app.get('/api/articles/:article_id', getArticlesById);
+app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles);
+app.get('/api/articles/:article_id', getArticlesById);
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 app.get('/api/users', getUsers);
 

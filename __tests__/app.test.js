@@ -15,6 +15,19 @@ afterAll(() => {
 
 
 describe("NC_NEWS", () => {
+    // /api/
+    describe('/api/', () => {
+        // task 3
+        test('GET 200: Responds with an object describing all the available endpoints on your API', () => {
+            return request(app)
+            .get('/api/')
+            .expect(200)
+            .then(({body}) =>{
+                const { endpoint } = body;
+                expect(endpoint).toBe(endpoint);
+            });
+        });
+    })
     // GET /api/topics
     describe('/api/topics', () => {
         // task 2
@@ -43,51 +56,7 @@ describe("NC_NEWS", () => {
             });
         });
     });
-
-    // /api/
-    describe('/api/', () => {
-        // task 3
-        test('GET 200: Responds with an object describing all the available endpoints on your API', () => {
-            return request(app)
-            .get('/api/')
-            .expect(200)
-            .then(({body}) =>{
-                const { endpoint } = body;
-                expect(endpoint).toBe(endpoint);
-            });
-        });
-    })
-
-    // /api/articles/:article_id
-    describe('/api/articles/:article_id', () => {
-        //task 4
-        test("GET 200: Responds with getting an article by its id.", () => {
-            return request(app)
-              .get('/api/articles/1')
-              .expect(200)
-              .then(({ body }) => {
-                const { articles } = body;
-                  expect(articles.article_id).toBe(1);
-                  expect(articles.title).toBe('Living in the shadow of a great man');
-                  expect(articles.topic).toBe('mitch');
-                  expect(articles.author).toBe('butter_bridge');
-                  expect(articles.body).toBe('I find this existence challenging');
-                  expect(typeof articles.created_at).toBe('string');
-                  expect(articles.votes).toBe(100);
-                  expect(articles.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700');
-            });
-        });
-
-        test("GET 404: Responds with an error if an id that does not exist is passed.", () => {
-            return request(app)
-              .get('/api/articles/105')
-              .expect(404)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('article id not found');
-            });
-        });
-    });
-
+    // GET /api/articles
     describe('/api/articles', () => {
         // task 5
         test("GET 200: Responds with an array of articles of article objects, with comment.", () => {
@@ -120,9 +89,127 @@ describe("NC_NEWS", () => {
                 expect(articles).toBeSortedBy('created_at', {descending: true });
             });
         });
-    }); 
     
-    describe('/api/articles/3/comments', () => {
+        // task 11
+        test("GET 200: Dependant on topic, respond with all articles related to that topic.", () => {
+            return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles.length).toBe(1);
+                    articles.forEach((article) => {
+                     expect(article.topic).toBe('cats')
+                     })
+            });
+        });
+
+        test("GET 200: Querying for a topic that is empty.", () => {
+            return request(app)
+              .get('/api/articles?topic=paper')
+              .expect(200)
+              .then(({ body }) => {
+                const { articles } = body;
+                  expect(Array.isArray(articles)).toBe(true);
+                  expect(articles.length).toBe(0);
+            });
+        });
+
+        test("GET 404: Querying for a topic that does not exist.", () => {
+            return request(app)
+              .get('/api/articles?topic=banana')
+              .expect(404)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('Topic not found');
+            });
+        });
+    });
+
+    
+    // /api/articles/:article_id
+    describe('/api/articles/:article_id', () => {
+        //task 4
+        test("GET 200: Responds with getting an article by its id.", () => {
+            return request(app)
+              .get('/api/articles/1')
+              .expect(200)
+              .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles.article_id).toBe(1);
+                  expect(articles.title).toBe('Living in the shadow of a great man');
+                  expect(articles.topic).toBe('mitch');
+                  expect(articles.author).toBe('butter_bridge');
+                  expect(articles.body).toBe('I find this existence challenging');
+                  expect(typeof articles.created_at).toBe('string');
+                  expect(articles.votes).toBe(100);
+                  expect(articles.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700');
+            });
+        });
+
+        test("GET 404: Responds with an error if an id that does not exist is passed.", () => {
+            return request(app)
+              .get('/api/articles/105')
+              .expect(404)
+              .then(({ body: { message } }) => {
+                expect(message).toBe('article id not found');
+                });
+        });
+      
+
+       // task 8
+        test("PATCH 202: Responds with an updated article.", () => {
+           return request(app)
+           .patch('/api/articles/1')
+           .send({inc_votes: 5})
+           .expect(202)
+           .then(({ body }) => {
+               const { update } = body;
+               expect(update).toMatchObject({
+               article_id: 1,
+               title: "Living in the shadow of a great man",
+               topic: "mitch",
+               author: "butter_bridge",
+               body: "I find this existence challenging",
+               created_at: expect.any(String),
+               votes: 105,
+               article_img_url:
+               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+               });
+           });
+        }); 
+       
+        test("GET 400: Bad request of increments in vote.", () => {
+           return request(app)
+             .patch('/api/articles/1')
+             .send({inc_votes: 'hello'})
+             .expect(400)
+             .then(({ body: { message } }) => {
+               expect(message).toBe('This is a bad request, invalid format or votes is missing.');
+           });
+        });
+
+        // task 12
+        test("GET 200: Responds with getting an article by its id, with the comment count added.", () => {
+            return request(app)
+              .get('/api/articles/1')
+              .expect(200)
+              .then(({ body }) => {
+                const { articles } = body;
+                  expect(articles.article_id).toBe(1);
+                  expect(articles.title).toBe('Living in the shadow of a great man');
+                  expect(articles.topic).toBe('mitch');
+                  expect(articles.author).toBe('butter_bridge');
+                  expect(articles.body).toBe('I find this existence challenging');
+                  expect(typeof articles.created_at).toBe('string');
+                  expect(articles.votes).toBe(100);
+                  expect(articles.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700');
+                  expect(articles.comment_count).toBe('11');
+            });
+        });
+    
+    });
+    
+    describe('/api/articles/:article_id/comments', () => {
         // task 6
         test('GET 200: Responds with an array of comments for the given article_id', () => {
             return request(app)
@@ -177,40 +264,6 @@ describe("NC_NEWS", () => {
         });
 
     });
-     // /api/articles/:article_id
-     describe('/api/articles/:article_id', () => {
-        // task 8
-        test("PATCH 202: Responds with an updated article.", () => {
-            return request(app)
-            .patch('/api/articles/1')
-            .send({inc_votes: 5})
-            .expect(202)
-            .then(({ body }) => {
-                const { update } = body;
-                expect(update).toMatchObject({
-                article_id: 1,
-                title: "Living in the shadow of a great man",
-                topic: "mitch",
-                author: "butter_bridge",
-                body: "I find this existence challenging",
-                created_at: expect.any(String),
-                votes: 105,
-                article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-                });
-            });
-        }); 
-        
-        test("GET 400: Bad request of increments in vote.", () => {
-            return request(app)
-              .patch('/api/articles/1')
-              .send({inc_votes: 'hello'})
-              .expect(400)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('This is a bad request, invalid format or votes is missing.');
-            });
-        });
-    });
 
     describe('/api/comments/:comment_id', () => {
         // task 9
@@ -240,39 +293,4 @@ describe("NC_NEWS", () => {
         });
     });
 
-    describe('/api/articles/', () => {
-        // task 11
-        test("GET 200: Dependant on topic, respond with all articles related to that topic.", () => {
-            return request(app)
-            .get('/api/articles?topic=cats')
-            .expect(200)
-            .then(({ body }) => {
-                const { articles } = body;
-                  expect(articles.length).toBe(1);
-                    articles.forEach((article) => {
-                     expect(article.topic).toBe('cats')
-                     })
-            });
-        });
-
-        test("GET 200: Querying for a topic that is empty.", () => {
-            return request(app)
-              .get('/api/articles?topic=paper')
-              .expect(200)
-              .then(({ body }) => {
-                const { articles } = body;
-                  expect(Array.isArray(articles)).toBe(true);
-                  expect(articles.length).toBe(0);
-            });
-        });
-
-        test("GET 404: Querying for a topic that does not exist.", () => {
-            return request(app)
-              .get('/api/articles?topic=banana')
-              .expect(404)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('Topic not found');
-            });
-        });
-    });
 });
