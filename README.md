@@ -1,3 +1,21 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+Instructions:
+- env. files will need to be added -->
+  .env.development and .env.test
+  Inside those files call the database.
+
+  .env.development
+  ==> PGDATABASE=nameOfDatabase
+
+  .env.test
+  ==> PGDATABASE=nameOfDatabase_test
+
+  Install the following:
+  you can run (npm i)
+
+  Ensure these are installed -->
+  Express
+  Jest
+  Jest sorted
+
