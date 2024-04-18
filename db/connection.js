@@ -1,5 +1,4 @@
 const { Pool } = require('pg');
-const config = {};
 
 //  handle using the correct environment variables here
 
@@ -11,6 +10,7 @@ require('dotenv').config({ path: pathToEnvFile });
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
   throw new Error('PGDATABASE or DATABASE_URL not set');
 }
+const config = {};
 
 console.log(`Running in ${ENV} environment`);
 console.log('the path is', pathToEnvFile);
