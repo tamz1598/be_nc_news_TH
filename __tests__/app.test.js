@@ -329,5 +329,30 @@ describe("NC_NEWS", () => {
                 });
             });
         });
+        
+    });
+
+    describe('/api/users/:username', () => {
+      // task 17
+      test("GET 200: Responds with getting an user by its id.", () => {
+        return request(app)
+          .get('/api/users/butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            const { users } = body;
+              expect(users.username).toBe('butter_bridge');
+              expect(users.name).toBe('jonny');
+              expect(users.avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+            });
+        });
+        
+        test("GET 404: Bad request of username.", () => {
+          return request(app)
+            .get('/api/users/hollow_tree')
+            .expect(404)
+            .then(({ body: { message } }) => {
+              expect(message).toBe('user not found');
+          });
+      });
     });
 });
