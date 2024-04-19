@@ -120,6 +120,15 @@ exports.deleteCommentByCommentId = (comment_id) => {
     .query('DELETE FROM comments WHERE comment_id = $1', [comment_id]);
 }
 
+// UPDATE USER BY ID
+exports.updateCommentByCommentId = (comment_id, inc_votes) => {
+    const sqlUpdateString = format(`UPDATE comments SET votes = votes + %L WHERE comment_id = %L RETURNING *;`, inc_votes, comment_id)
+    return db.query(sqlUpdateString)
+    .then(({ rows:update }) => {
+        return update[0];
+    })
+}
+
 // GET USERS
 exports.selectUsers = () =>{
     return db
