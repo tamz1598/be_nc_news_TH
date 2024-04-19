@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArticleId, updateArticleByArticleId, deleteCommentByCommentId, selectUsers, selectUsersByUsername, updateCommentByCommentId} = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArticleId, updateArticleByArticleId, deleteCommentByCommentId, selectUsers, selectUsersByUsername, updateCommentByCommentId, insertArticlesByArticleId} = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -31,7 +31,6 @@ exports.getArticles = (req, res, next) => {
     });
 }
 
-
 // GET ARTICLE BY ID
 exports.getArticlesById = (req, res, next) => {
     const { article_id } = req.params;
@@ -44,6 +43,27 @@ exports.getArticlesById = (req, res, next) => {
             return res.status(404).send({ message: 'article id not found' });
         }
         res.status(200).send({ articles });
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
+// POST ARTICLES BY ARTICLE ID
+exports.postArticlesByArticleId = (req, res, next) => {
+    const { title, topic, author, body, article_img_url } = req.body;
+
+    const newArticle = {
+        title: title,
+        topic: topic,
+        author: author,
+        body: body,
+        article_img_url: article_img_url
+    };
+    
+    insertArticlesByArticleId(newArticle)
+    .then((articles) => {
+        res.status(201).send({ articles });
     })
     .catch((err) => {
         next(err);
