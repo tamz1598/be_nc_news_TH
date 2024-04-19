@@ -309,7 +309,25 @@ describe("NC_NEWS", () => {
             return request(app)
             .delete('/api/comments/4')
             .expect(204)
-        })
+        });
+
+        test("PATCH 202: Responds with an updated comment, update the votes on a comment given the comment's comment_id.", () => {
+          return request(app)
+          .patch('/api/comments/3')
+          .send({inc_votes: 2})
+          .expect(202)
+          .then(({ body }) => {
+              const { update } = body;
+              expect(update).toMatchObject({
+              comment_id: 3,
+              body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+              votes: 102,
+              author: "icellusedkars",
+              article_id: 1,
+              created_at: expect.any(String),
+              });
+          });
+       }); 
     });
 
     describe('/api/users', () => {

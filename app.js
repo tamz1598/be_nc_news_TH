@@ -3,7 +3,7 @@ const app = express();
 const apiRouter = require('./routes/api');
 
 // connect to controller
-const { postCommentsByArticleId, patchArticleByArticleId } = require('./controller/app.controller');
+const { postCommentsByArticleId, patchArticleByArticleId, patchCommentByCommentId} = require('./controller/app.controller');
 
 app.use('/api', apiRouter);
 app.use(express.json());
@@ -11,8 +11,9 @@ app.use(express.json());
 // endpoints
 
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
-
 app.patch('/api/articles/:article_id', patchArticleByArticleId);
+
+app.patch('/api/comments/:comment_id', patchCommentByCommentId);
 
 
 // error handling
