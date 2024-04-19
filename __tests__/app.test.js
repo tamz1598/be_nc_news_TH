@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../db/app');
+const app = require('../app');
 const db = require('../db/connection');
 
 const seed = require('../db/seeds/seed');
@@ -125,7 +125,7 @@ describe("NC_NEWS", () => {
         });
 
         // task 15
-        test.only("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
+        test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
             return request(app)
             .get('/api/articles')
             .expect(200)

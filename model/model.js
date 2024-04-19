@@ -52,7 +52,6 @@ exports.selectArticles = (topic, sort_by="created_at", order="desc") => {
     return db
     .query(query, values)
     .then(({ rows }) => {
-        console.log(rows)
         return rows;
     });
 }
