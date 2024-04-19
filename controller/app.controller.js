@@ -1,4 +1,4 @@
-const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArticleId, updateArticleByArticleId, deleteCommentByCommentId, selectUsers} = require('../model/model');
+const { selectTopics, selectArticlesById, checkArticleExists, selectArticles, selectCommentsByArticleId, insertCommentByArticleId, updateArticleByArticleId, deleteCommentByCommentId, selectUsers, selectUsersByUsername} = require('../model/model');
 // connect to endpoints
 const endpoints = require('../endpoints.json');
 const articles = require('../db/data/test-data/articles');
@@ -151,4 +151,18 @@ exports.getUsers = (req, res, next) => {
     next(err);
     });
 }
+
+// GET USERS BY USERNAME
+exports.getUsersByUsername = (req, res, next) => {
+    const { username } = req.params;
+    
+    selectUsersByUsername(username)
+    .then((users) => {
+        res.status(200).send({ users });
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
 

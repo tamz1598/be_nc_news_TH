@@ -128,3 +128,18 @@ exports.selectUsers = () =>{
     });
 }
 
+// GET USERS BY USERNAME
+exports.selectUsersByUsername = (username) => {
+    return db
+    .query(`SELECT * FROM users WHERE username=$1;`, [username])
+    .then(({ rows:users }) =>{
+        if (users.length === 0) {
+            // If no user found with the given username, return null
+            return Promise.reject({ status: 404, message: "user not found"})
+        } else {
+            // Otherwise, return the user data
+            return users[0];
+        }  
+    });   
+}
+
