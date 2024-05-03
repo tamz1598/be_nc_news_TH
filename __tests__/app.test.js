@@ -58,109 +58,134 @@ describe("NC_NEWS", () => {
     });
     // GET /api/articles
     describe('/api/articles', () => {
-        // task 5
-        test("GET 200: Responds with an array of articles of article objects, with comment.", () => {
-            return request(app)
-              .get('/api/articles')
-              .expect(200)
-              .then(({ body }) => {
-                const { articles } = body;
-                expect(articles).toHaveLength(13);
-
-                  articles.forEach(article => {
-                  expect(typeof article.article_id).toBe('number');
-                  expect(typeof article.title).toBe('string');
-                  expect(typeof article.topic).toBe('string');
-                  expect(typeof article.author).toBe('string');
-                  expect(typeof article.created_at).toBe('string');
-                  expect(typeof article.votes).toBe('number');
-                  expect(typeof article.article_img_url).toBe('string');
-                  expect(typeof article.comment_count).toBe('string');
-                  });
-            });
-        });
-
-        test("GET 200: Responds with an array of articles of article objects, with comment and in descending order.", () => {
-            return request(app)
-              .get('/api/articles?order=desc')
-              .expect(200)
-              .then(({ body }) => {
-                const { articles } = body;
-                expect(articles).toBeSortedBy('created_at', {descending: true });
-            });
-        });
-    
-        // task 11
-        test("GET 200: Dependant on topic, respond with all articles related to that topic.", () => {
-            return request(app)
-            .get('/api/articles?topic=cats')
-            .expect(200)
-            .then(({ body }) => {
-                const { articles } = body;
-                  expect(articles.length).toBe(1);
-                    articles.forEach((article) => {
-                     expect(article.topic).toBe('cats')
-                     })
-            });
-        });
-
-        test("GET 200: Querying for a topic that is empty.", () => {
-            return request(app)
-              .get('/api/articles?topic=paper')
-              .expect(200)
-              .then(({ body }) => {
-                const { articles } = body;
-                  expect(Array.isArray(articles)).toBe(true);
-                  expect(articles.length).toBe(0);
-            });
-        });
-
-        test("GET 404: Querying for a topic that does not exist.", () => {
-            return request(app)
-              .get('/api/articles?topic=banana')
-              .expect(404)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('Topic not found');
-            });
-        });
-
-        // task 15
-        test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
-            return request(app)
+      // task 5
+      test("GET 200: Responds with an array of articles of article objects, with comment.", () => {
+          return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
-                const { articles } = body;
-                  expect(articles).toBeSortedBy('created_at', {descending: true });
-                })
-        });
+              const { articles } = body;
+              expect(articles).toHaveLength(13);
 
-        test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
-            return request(app)
-            .get('/api/articles?sort_by=author')
+                articles.forEach(article => {
+                expect(typeof article.article_id).toBe('number');
+                expect(typeof article.title).toBe('string');
+                expect(typeof article.topic).toBe('string');
+                expect(typeof article.author).toBe('string');
+                expect(typeof article.created_at).toBe('string');
+                expect(typeof article.votes).toBe('number');
+                expect(typeof article.article_img_url).toBe('string');
+                expect(typeof article.comment_count).toBe('string');
+                });
+          });
+      });
+
+      test("GET 200: Responds with an array of articles of article objects, with comment and in descending order.", () => {
+          return request(app)
+            .get('/api/articles?order=desc')
             .expect(200)
             .then(({ body }) => {
-                const { articles } = body;
-                  expect(articles).toBeSortedBy('author', {descending: true });
-            })
-        });
+              const { articles } = body;
+              expect(articles).toBeSortedBy('created_at', {descending: true });
+          });
+      });
+  
+      // task 11
+      test("GET 200: Dependant on topic, respond with all articles related to that topic.", () => {
+          return request(app)
+          .get('/api/articles?topic=cats')
+          .expect(200)
+          .then(({ body }) => {
+              const { articles } = body;
+                expect(articles.length).toBe(1);
+                  articles.forEach((article) => {
+                    expect(article.topic).toBe('cats')
+                    })
+          });
+      });
 
-        test("GET 400: Responds with an error if passed an invalid sort order.", () => {
-            return request(app)
-              .get('/api/articles?order=banana')
-              .expect(400)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('invalid sort order');
-            });
-        });
+      test("GET 200: Querying for a topic that is empty.", () => {
+          return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+                expect(Array.isArray(articles)).toBe(true);
+                expect(articles.length).toBe(0);
+          });
+      });
 
-        test("GET 400: Responds with an error if passed an invalid sort order.", () => {
-            return request(app)
-              .get('/api/articles?sort_by=something')
-              .expect(400)
-              .then(({ body: { message } }) => {
-                expect(message).toBe('invalid query value');
+      test("GET 404: Querying for a topic that does not exist.", () => {
+          return request(app)
+            .get('/api/articles?topic=banana')
+            .expect(404)
+            .then(({ body: { message } }) => {
+              expect(message).toBe('Topic not found');
+          });
+      });
+
+      // task 15
+      test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
+          return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+              const { articles } = body;
+                expect(articles).toBeSortedBy('created_at', {descending: true });
+              })
+      });
+
+      test("GET 200: FEATURE REQUEST Responds with sorting queries.", () => {
+          return request(app)
+          .get('/api/articles?sort_by=author')
+          .expect(200)
+          .then(({ body }) => {
+              const { articles } = body;
+                expect(articles).toBeSortedBy('author', {descending: true });
+          })
+      });
+
+      test("GET 400: Responds with an error if passed an invalid sort order.", () => {
+          return request(app)
+            .get('/api/articles?order=banana')
+            .expect(400)
+            .then(({ body: { message } }) => {
+              expect(message).toBe('invalid sort order');
+          });
+      });
+
+      test("GET 400: Responds with an error if passed an invalid sort order.", () => {
+          return request(app)
+            .get('/api/articles?sort_by=something')
+            .expect(400)
+            .then(({ body: { message } }) => {
+              expect(message).toBe('invalid query value');
+          });
+      });
+
+      // task 19
+      test("POST 201: Add a new article to articles and return that comment.", () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: "The courting of a heart",
+            topic: "cats",
+            author: "icellusedkars",
+            body: "Helllo",
+            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toMatchObject({
+            article_id: 14,
+            title: "The courting of a heart",
+            topic: "cats",
+            author: "icellusedkars",
+            body: "Helllo",
+            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
             });
+          });
         });
     });
    

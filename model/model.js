@@ -111,7 +111,20 @@ exports.insertCommentByArticleId = (newComment) => {
     .then(({ rows }) => {
         return rows[0];
     });
+}
 
+// POST ARTICLE BY ARTICLE ID
+exports.insertArticlesByArticleId = (newArticle) => {
+    const sqlString = format(`
+        INSERT INTO articles
+        (title, topic, author, body, article_img_url)
+        VALUES %L RETURNING *;`,
+        [[newArticle.title, newArticle.topic, newArticle.author, newArticle.body, newArticle.article_img_url]])
+
+    return db.query(sqlString)
+    .then(({ rows }) => {
+        return rows[0];
+    });
 }
 
 // DELETE COMMENT BY ID

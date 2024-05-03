@@ -190,5 +190,20 @@
         }
       ]
     }
+  },
+  "POST /api/articles": {
+    "description": "Create an article based on article_id",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "The courting of a heart",
+          "topic": "cats",
+          "author": "icellusedkars",
+          "body": "Helllo",
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
   }
 }
