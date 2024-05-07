@@ -6,9 +6,9 @@ const cors = require('cors');
 // connect to controller
 const { postCommentsByArticleId, patchArticleByArticleId, patchCommentByCommentId, postArticlesByArticleId} = require('./controller/app.controller');
 
-app.use('/api', apiRouter);
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
+app.use('/api', apiRouter);
 
 // endpoints
 
